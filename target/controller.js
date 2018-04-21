@@ -14,8 +14,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const routing_controllers_1 = require("routing-controllers");
 const entity_1 = require("./games/entity");
+const class_validator_1 = require("class-validator");
 let MainController = class MainController {
     constructor() {
+        this.validator = new class_validator_1.Validator();
         this.colors = ["red", "blue", "green", "yellow", "magenta"];
         this.rand = this.colors[Math.floor(Math.random() * this.colors.length)];
         this.defaultBoard = JSON.parse(JSON.stringify("[['o', 'o', 'o'],['o', 'o', 'o'],['o', 'o', 'o']]"));
@@ -32,6 +34,11 @@ let MainController = class MainController {
     }
     async updateGame(id, update) {
         const game = await entity_1.default.findOne(id);
+        if (Object.keys(update).includes('color')) {
+            if (this.validator.isNotIn((update.color), (this.colors))) {
+                throw new routing_controllers_1.NotAcceptableError('invalid color');
+            }
+        }
         if (!game)
             throw new routing_controllers_1.NotFoundError('Cannot find game');
         return entity_1.default.merge(game, update).save();

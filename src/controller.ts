@@ -1,8 +1,12 @@
-import {Controller, Get,Post,HttpCode,Body,NotFoundError,Param,Put} from 'routing-controllers'
+import {Controller, Get,Post,HttpCode,Body,NotFoundError,Param,Put, NotAcceptableError} from 'routing-controllers'
 import Game from './games/entity'
+//import { IsNotIn } from 'class-validator';
+import {Validator} from "class-validator";
+
 
 @Controller()
 export default class MainController {
+    validator = new Validator();
 
     colors=["red", "blue", "green", "yellow", "magenta"]
 
@@ -35,9 +39,22 @@ export default class MainController {
    @Param('id') id: number,
    @Body() update: Partial<Game>
    ) {
+    
    const game = await Game.findOne(id)
+   if(Object.keys(update).includes('color')){
+      if(this.validator.isNotIn((update.color),(this.colors)))
+   
+      {  
+          throw new NotAcceptableError('invalid color')
+          
+          
+      }
+      
+      
+   }
+   
    if (!game) throw new NotFoundError('Cannot find game')
-
+   
   return Game.merge(game, update).save()
 }
 
