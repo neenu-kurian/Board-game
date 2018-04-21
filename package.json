@@ -1,0 +1,27 @@
+{
+  "name": "boardgame",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "repository": "git@github.com:neenu-kurian/Board-game.git",
+  "author": "neenu <neenukurian92@gmail.com>",
+  "scripts": {
+    "watch": "node_modules/.bin/tsc -w",
+    "start": "node ."
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/koa": "^2.0.45",
+    "@types/koa-bodyparser": "^4.2.0",
+    "@types/koa-multer": "^1.0.0",
+    "@types/koa-router": "^7.0.27",
+    "@types/node": "^9.6.6",
+    "koa": "^2.5.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-multer": "^1.0.2",
+    "koa-router": "^7.4.0",
+    "pg": "^7.4.1",
+    "routing-controllers": "^0.7.7",
+    "typeorm": "^0.2.0",
+    "typescript": "^2.8.3"
+  }
+}
