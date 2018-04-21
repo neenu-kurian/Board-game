@@ -18,7 +18,7 @@ let MainController = class MainController {
     constructor() {
         this.colors = ["red", "blue", "green", "yellow", "magenta"];
         this.rand = this.colors[Math.floor(Math.random() * this.colors.length)];
-        this.defaultBoard = "[['o', 'o', 'o'],['o', 'o', 'o'],['o', 'o', 'o']]";
+        this.defaultBoard = JSON.parse(JSON.stringify("[['o', 'o', 'o'],['o', 'o', 'o'],['o', 'o', 'o']]"));
         this.board = { "games": this.defaultBoard };
     }
     async allGames() {
@@ -27,7 +27,7 @@ let MainController = class MainController {
     }
     createGame(game) {
         game["color"] = this.rand;
-        game["board"] = this.board;
+        game["board"] = this.defaultBoard;
         return game.save();
     }
     async updateGame(id, update) {
@@ -52,6 +52,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MainController.prototype, "createGame", null);
 __decorate([
+    routing_controllers_1.Put('/games/:id'),
     __param(0, routing_controllers_1.Param('id')),
     __param(1, routing_controllers_1.Body()),
     __metadata("design:type", Function),

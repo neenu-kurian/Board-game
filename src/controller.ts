@@ -1,4 +1,4 @@
-import {Controller, Get,Post,HttpCode,Body,NotFoundError,Param} from 'routing-controllers'
+import {Controller, Get,Post,HttpCode,Body,NotFoundError,Param,Put} from 'routing-controllers'
 import Game from './games/entity'
 
 @Controller()
@@ -8,7 +8,8 @@ export default class MainController {
 
     rand = this.colors[Math.floor(Math.random() * this.colors.length)];
 
-    defaultBoard = "[['o', 'o', 'o'],['o', 'o', 'o'],['o', 'o', 'o']]"
+    defaultBoard = JSON.parse(JSON.stringify("[['o', 'o', 'o'],['o', 'o', 'o'],['o', 'o', 'o']]"))
+    
 
     board = {"games":this.defaultBoard}
     
@@ -24,12 +25,12 @@ export default class MainController {
     @Body() game: Game
     ) {
     game["color"]=this.rand
-    game["board"]=this.board
+    game["board"]=this.defaultBoard
    
     return game.save()
    }
 
-   Put('/games/:id')
+   @Put('/games/:id')
    async updateGame(
    @Param('id') id: number,
    @Body() update: Partial<Game>
