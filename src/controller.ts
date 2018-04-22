@@ -1,6 +1,5 @@
-import {Controller, Get,Post,HttpCode,Body,NotFoundError,Param,Put, NotAcceptableError} from 'routing-controllers'
+import {Controller, Get,Post,HttpCode,Body,NotFoundError,Param,Put, NotAcceptableError, BadRequestError} from 'routing-controllers'
 import Game from './games/entity'
-//import { IsNotIn } from 'class-validator';
 import {Validator} from "class-validator";
 
 
@@ -14,14 +13,13 @@ export default class MainController {
 
     defaultBoard = JSON.parse(JSON.stringify("[['o', 'o', 'o'],['o', 'o', 'o'],['o', 'o', 'o']]"))
     
-
-    board = {"games":this.defaultBoard}
     
     @Get('/games')
     async allGames() {
       const games = await Game.find()
       return { games }
     }
+
 
     @Post('/games')
     @HttpCode(201)
@@ -34,28 +32,77 @@ export default class MainController {
     return game.save()
    }
 
+
+
    @Put('/games/:id')
    async updateGame(
    @Param('id') id: number,
    @Body() update: Partial<Game>
    ) {
-    
+   
    const game = await Game.findOne(id)
+   let previousBoard = game["board"]
+  
    if(Object.keys(update).includes('color')){
       if(this.validator.isNotIn((update.color),(this.colors)))
-   
-      {  
+     {  
           throw new NotAcceptableError('invalid color')
-          
-          
-      }
-      
-      
+     }
+
+     else{
+         if(Object.keys(update).includes('board')){
+
+             let currentBoard=update.board
+             let moves=this.getMoves(previousBoard,currentBoard)
+             
+             if(moves>1)
+              return new BadRequestError('Invalid Move')
+         }
+     }
    }
    
    if (!game) throw new NotFoundError('Cannot find game')
    
   return Game.merge(game, update).save()
-}
+ }
+
+ getMoves(previousBoard,currentBoard)
+ {
+    
+    console.log("inside getmoves")
+    let slicedPrevBoard=previousBoard.slice(1,-1)
+    slicedPrevBoard = slicedPrevBoard.replace("],", "] ")
+    slicedPrevBoard = slicedPrevBoard.split(" ")
+    let slicedCurrBoard=currentBoard.slice(1,-1)
+    slicedCurrBoard = slicedCurrBoard.replace("],", "] ")
+    slicedCurrBoard = slicedCurrBoard.split(" ")
+
+    let strPrevBoard=""
+    let strCurrBoard=""
+   
+    slicedPrevBoard.map((row, y) => {
+        let newrow=row.replace(/"|'|\[|\]|,/gi,"") 
+        strPrevBoard=strPrevBoard.concat(newrow)
+    })
+
+    slicedCurrBoard.map((row, y) => {
+        let newrow=row.replace(/"|'|\[|\]|,/gi,"") 
+        strCurrBoard=strCurrBoard.concat(newrow)
+    })
+    let moves=0
+    console.log(strCurrBoard)
+    console.log(strPrevBoard)
+    
+    for(let i=0;i<strCurrBoard.length;i=i+1)
+    {
+        console.log("string length"+ strCurrBoard.length)
+        if(strCurrBoard[i]!=strPrevBoard[i]){
+            console.log("Moves"+moves)
+         moves=moves+1
+        }
+    }
+    console.log(moves)
+    return moves
+ }
 
 }

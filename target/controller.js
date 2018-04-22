@@ -21,7 +21,6 @@ let MainController = class MainController {
         this.colors = ["red", "blue", "green", "yellow", "magenta"];
         this.rand = this.colors[Math.floor(Math.random() * this.colors.length)];
         this.defaultBoard = JSON.parse(JSON.stringify("[['o', 'o', 'o'],['o', 'o', 'o'],['o', 'o', 'o']]"));
-        this.board = { "games": this.defaultBoard };
     }
     async allGames() {
         const games = await entity_1.default.find();
@@ -34,14 +33,54 @@ let MainController = class MainController {
     }
     async updateGame(id, update) {
         const game = await entity_1.default.findOne(id);
+        let previousBoard = game["board"];
         if (Object.keys(update).includes('color')) {
             if (this.validator.isNotIn((update.color), (this.colors))) {
                 throw new routing_controllers_1.NotAcceptableError('invalid color');
+            }
+            else {
+                if (Object.keys(update).includes('board')) {
+                    let currentBoard = update.board;
+                    let moves = this.getMoves(previousBoard, currentBoard);
+                    if (moves > 1)
+                        return new routing_controllers_1.BadRequestError('Invalid Move');
+                }
             }
         }
         if (!game)
             throw new routing_controllers_1.NotFoundError('Cannot find game');
         return entity_1.default.merge(game, update).save();
+    }
+    getMoves(previousBoard, currentBoard) {
+        console.log("inside getmoves");
+        let slicedPrevBoard = previousBoard.slice(1, -1);
+        slicedPrevBoard = slicedPrevBoard.replace("],", "] ");
+        slicedPrevBoard = slicedPrevBoard.split(" ");
+        let slicedCurrBoard = currentBoard.slice(1, -1);
+        slicedCurrBoard = slicedCurrBoard.replace("],", "] ");
+        slicedCurrBoard = slicedCurrBoard.split(" ");
+        let strPrevBoard = "";
+        let strCurrBoard = "";
+        slicedPrevBoard.map((row, y) => {
+            let newrow = row.replace(/"|'|\[|\]|,/gi, "");
+            strPrevBoard = strPrevBoard.concat(newrow);
+        });
+        slicedCurrBoard.map((row, y) => {
+            let newrow = row.replace(/"|'|\[|\]|,/gi, "");
+            strCurrBoard = strCurrBoard.concat(newrow);
+        });
+        let moves = 0;
+        console.log(strCurrBoard);
+        console.log(strPrevBoard);
+        for (let i = 0; i < strCurrBoard.length; i = i + 1) {
+            console.log("string length" + strCurrBoard.length);
+            if (strCurrBoard[i] != strPrevBoard[i]) {
+                console.log("Moves" + moves);
+                moves = moves + 1;
+            }
+        }
+        console.log(moves);
+        return moves;
     }
 };
 __decorate([
