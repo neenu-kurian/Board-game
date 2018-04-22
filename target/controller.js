@@ -52,33 +52,32 @@ let MainController = class MainController {
         return entity_1.default.merge(game, update).save();
     }
     getMoves(previousBoard, currentBoard) {
-        console.log("inside getmoves");
         let slicedPrevBoard = previousBoard.slice(1, -1);
-        slicedPrevBoard = slicedPrevBoard.replace("],", "] ");
+        slicedPrevBoard = slicedPrevBoard.replace("]", "] ");
         slicedPrevBoard = slicedPrevBoard.split(" ");
         let slicedCurrBoard = currentBoard.slice(1, -1);
-        slicedCurrBoard = slicedCurrBoard.replace("],", "] ");
+        slicedCurrBoard = slicedCurrBoard.replace("]", "] ");
         slicedCurrBoard = slicedCurrBoard.split(" ");
         let strPrevBoard = "";
         let strCurrBoard = "";
         slicedPrevBoard.map((row, y) => {
-            let newrow = row.replace(/"|'|\[|\]|,/gi, "");
+            let newrow = row.replace(/"|'|\[|\]/gi, "");
             strPrevBoard = strPrevBoard.concat(newrow);
         });
         slicedCurrBoard.map((row, y) => {
-            let newrow = row.replace(/"|'|\[|\]|,/gi, "");
+            let newrow = row.replace(/"|'|\[|\]/gi, "");
             strCurrBoard = strCurrBoard.concat(newrow);
         });
         let moves = 0;
-        console.log(strCurrBoard);
-        console.log(strPrevBoard);
-        for (let i = 0; i < strCurrBoard.length; i = i + 1) {
-            console.log("string length" + strCurrBoard.length);
-            if (strCurrBoard[i] != strPrevBoard[i]) {
-                console.log("Moves" + moves);
+        let currBoard = strCurrBoard.split(',');
+        let prevBoard = strPrevBoard.split(',');
+        console.log(currBoard);
+        console.log(prevBoard);
+        currBoard.map((element, index) => {
+            if (element != prevBoard[index]) {
                 moves = moves + 1;
             }
-        }
+        });
         console.log(moves);
         return moves;
     }
