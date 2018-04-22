@@ -101,14 +101,6 @@ export default class MainController {
         moves=moves+1
     }})
 
-   /* for(let i=0;i<strCurrBoard.length;i=i+1)
-    {
-        console.log("string length"+ strCurrBoard.length)
-        if(strCurrBoard[i]!=strPrevBoard[i]){
-            console.log("Moves"+moves)
-         moves=moves+1
-        }
-    }*/
     console.log(moves)
     return moves
  }
