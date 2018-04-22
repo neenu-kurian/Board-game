@@ -8,12 +8,13 @@ export default class MainController {
     validator = new Validator();
 
     colors=["red", "blue", "green", "yellow", "magenta"]
-
+    
+    //to get random colors
     rand = this.colors[Math.floor(Math.random() * this.colors.length)];
-
+    //creating default board of type JSON
     defaultBoard = JSON.parse(JSON.stringify("[['o', 'o', 'o'],['o', 'o', 'o'],['o', 'o', 'o']]"))
     
-    
+    //to get all games 
     @Get('/games')
     async allGames() 
     {
@@ -21,7 +22,7 @@ export default class MainController {
       return { games }
     }
 
-
+    //to create a new game
     @Post('/games')
     @HttpCode(201)
     createGame(
@@ -35,7 +36,7 @@ export default class MainController {
    }
 
 
-
+   //to update an existing game
    @Put('/games/:id')
    async updateGame(
    @Param('id') id: number,
@@ -44,15 +45,18 @@ export default class MainController {
    {
      const game = await Game.findOne(id)
      let previousBoard = game["board"]
-    
+     
+     //checking if the body of request has color 
      if(Object.keys(update).includes('color'))
-     {
+     {   
+         //validating if color is in list of random colors
          if(this.validator.isNotIn((update.color),(this.colors)))
          {  
               throw new NotAcceptableError('invalid color')
          }
    
          else {
+              //checking number of moves
                if(Object.keys(update).includes('board'))
                {
                    let currentBoard=update.board
@@ -69,7 +73,7 @@ export default class MainController {
      return Game.merge(game, update).save()
    }
 
- 
+  //function that takes last board and current board entered by user as parameter and returns no of moves
   getMoves(previousBoard,currentBoard)
   {
      let slicedPrevBoard=previousBoard.slice(1,-1).replace("]","] ").split(" ")
