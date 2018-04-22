@@ -52,12 +52,8 @@ let MainController = class MainController {
         return entity_1.default.merge(game, update).save();
     }
     getMoves(previousBoard, currentBoard) {
-        let slicedPrevBoard = previousBoard.slice(1, -1);
-        slicedPrevBoard = slicedPrevBoard.replace("]", "] ");
-        slicedPrevBoard = slicedPrevBoard.split(" ");
-        let slicedCurrBoard = currentBoard.slice(1, -1);
-        slicedCurrBoard = slicedCurrBoard.replace("]", "] ");
-        slicedCurrBoard = slicedCurrBoard.split(" ");
+        let slicedPrevBoard = previousBoard.slice(1, -1).replace("]", "] ").split(" ");
+        let slicedCurrBoard = currentBoard.slice(1, -1).replace("]", "] ").split(" ");
         let strPrevBoard = "";
         let strCurrBoard = "";
         slicedPrevBoard.map((row, y) => {
